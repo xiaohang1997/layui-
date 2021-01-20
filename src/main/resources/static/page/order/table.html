@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../../../lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../../css/public.css" media="all">
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">产品名称</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="productName" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label">公司名称</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="company" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加 </button>
+            </div>
+        </script>
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+        <script type="text/html" id="currentTableBar">
+            <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" type="button" lay-event="delete">删除</a>
+        </script>
+
+    </div>
+</div>
+<script src="../../../lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'table'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table;
+
+        table.render({
+            elem: '#currentTableId',
+            url: '../../order/queryAll',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'exports', 'print', {
+                title: '提示',
+                layEvent: 'LAYTABLE_TIPS',
+                icon: 'layui-icon-tips'
+            }],
+            cols: [[
+                {type: "checkbox", width: 50},
+                {field: 'id', title: 'id'},
+                {templet:'<div>{{d.product.name}}</div>', title: '产品名称',field: 'productName'},
+                {field: 'product_count',  title: '数量'},
+                {field: 'startTime',  title: '借出时间'},
+                {field: 'endTime',  title: '归还时限'},
+                {field: 'company', title: '公司'},
+                {field: 'phone',  title: '公司电话'},
+                {field: 'ispay', title: '归还', width: 100, templet: function (data) {
+                        if (data.ispay == 1) {
+                            return '<div> <input type="checkbox" checked="" name="codeSwitch" lay-skin="switch" id="open" lay-filter="switchTest1" switchId=' +
+                                data.id + ',' + data.product.id + ',' + data.product_count + ',' + data.ispay  +
+                                ' lay-text="已归还|未归还"  value=' + data.ispay + '></div>';
+                        }
+                        return '<div> <input type="checkbox" lay-skin="switch" name="codeSwitch"  switchId=' +
+                            data.id + ',' + data.product.id + ',' + data.product_count + ',' + data.ispay  +
+                            ' lay-filter="switchTest1"' +
+                            'lay-text="已归还|未归还" value=' + data.ispay + '></div>';
+
+                    }
+                },
+                {field: 'isdel', title: '禁用', width: 100, templet: function (data) {
+                        if (data.isdel == 1) {
+                            return '<div> <input type="checkbox" checked="" name="codeSwitch" lay-skin="switch" id="open" lay-filter="switchTest2" switchId=' +
+                                data.id + ',' + data.product.id + ',' + data.product_count + ',' + data.isdel  +
+                                ' lay-text="已禁用|未禁用"  value=' + data.isdel + '></div>';
+                        }
+                        return '<div> <input type="checkbox" lay-skin="switch" name="codeSwitch"  switchId=' +
+                            data.id + ',' + data.product.id + ',' + data.product_count + ',' + data.isdel  +
+                            ' lay-filter="switchTest2"' +
+                            'lay-text="已禁用|未禁用" value=' + data.isdel + '></div>';
+
+                    }
+                }
+            ]],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 15,
+            page: true,
+            skin: 'line'
+        });
+
+
+
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            var result = JSON.stringify(data.field);
+            //执行搜索重载
+            table.reload('currentTableId', {
+                url: "../../order/search",
+                method: 'post',
+                page: {
+                    curr: 1
+                }
+                , where: {
+                     searchParams: result
+                }
+            }, 'data');
+
+            return false;
+        });
+
+        function mySplit(string, num){
+            var array = string.split(',');
+            return array[num];
+        }
+        /**
+         * 监听开关 状态 操作
+         */
+        form.on('switch(switchTest1)', function (data) {
+            /**
+             * 禁用标签
+             * 状态 赋值为 1
+             */
+            var layerIndex = layer.load(3);
+
+            if ((this.checked ? 'true' : 'false') == 'false') {
+                $.ajax({
+                    url: '/order/change',
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        "is": "jian",
+                        "ispay": 0,
+                        "id" : mySplit(data.elem.getAttribute("switchId"), 0),
+                        "productId": mySplit(data.elem.getAttribute("switchId"), 1),
+                        "productCount": mySplit(data.elem.getAttribute("switchId"), 2)
+                    }),
+                    type: 'POST', //HTTP请求类型
+                    success: function (data) {
+                        console.log(data);
+
+
+                    }, error: function () {
+
+                    }
+
+                })
+            } else {
+                /**
+                 * 启动标签
+                 * 状态 赋值为 0
+                 */
+                $.ajax({
+                    url: '/order/change',
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        "ispay": 1,
+                        "is": "jia",
+                        "id" : mySplit(data.elem.getAttribute("switchId"), 0),
+                        "productId": mySplit(data.elem.getAttribute("switchId"), 1),
+                        "productCount": mySplit(data.elem.getAttribute("switchId"), 2)
+                    }),
+                    type: 'POST',
+                    success: function (data) {
+                        console.log(data);
+
+                    }, error: function () {
+                    }
+
+                })
+            }
+            layer.close(layerIndex);
+
+        });
+
+
+        /**
+         * 监听开关 状态 操作
+         */
+        form.on('switch(switchTest2)', function (data) {
+            /**
+             * 禁用标签
+             * 状态 赋值为 1
+             */
+            var layerIndex = layer.load(3);
+
+            if ((this.checked ? 'true' : 'false') == 'false') {
+                $.ajax({
+                    url: '/order/change',
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        "isdel": 0,
+                        "is": "jian",
+                        "id" : mySplit(data.elem.getAttribute("switchId"), 0),
+                        "productId": mySplit(data.elem.getAttribute("switchId"), 1),
+                        "productCount": mySplit(data.elem.getAttribute("switchId"), 2)
+                    }),
+                    type: 'POST', //HTTP请求类型
+                    success: function (data) {
+                        console.log(data);
+
+
+                    }, error: function () {
+
+                    }
+
+                })
+            } else {
+                /**
+                 * 启动标签
+                 * 状态 赋值为 0
+                 */
+                $.ajax({
+                    url: '/order/chnage',
+                    contentType: "application/json",
+                    data: JSON.stringify({
+                        "isdel": 1,
+                        "is" : "jia",
+                        "id" : mySplit(data.elem.getAttribute("switchId"), 0),
+                        "productId": mySplit(data.elem.getAttribute("switchId"), 1),
+                        "productCount": mySplit(data.elem.getAttribute("switchId"), 2)
+                    }),
+                    type: 'POST',
+                    success: function (data) {
+                        console.log(data);
+
+                    }, error: function () {
+                    }
+
+                })
+            }
+            layer.close(layerIndex);
+
+        });
+
+
+        /**
+         * toolbar监听事件
+         */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'add') {  // 监听添加操作
+                var index = layer.open({
+                    title: '添加',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: './add.html',
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+            } else if (obj.event === 'delete') {  // 监听删除操作
+                var checkStatus = table.checkStatus('currentTableId')
+                    , data = checkStatus.data;
+                var myArray = new Array();
+                for (var i = 0,l = data.length; i < l; i++){
+                    myArray[i] = data[i]['id'];
+                }
+                layer.confirm("确定要删除？", function (index) {
+                    $.ajax({
+                        type: "get",
+                        url: "../../product/deleteMany?data=" + myArray,
+                        success: function(data){
+                            if(data.msg == "success"){
+                                var index02 = layer.alert("删除成功", function(){
+                                    layer.close(index02);
+                                });
+                            }
+                            else{
+                                var index02 = layer.alert("删除失败", function(){
+                                    layer.close(index02);
+                                });
+                            }
+                        }
+                    });
+                    window.location.reload();
+                    layer.close(index);
+                })
+            }
+        });
+
+        //监听表格复选框选择
+        table.on('checkbox(currentTableFilter)', function (obj) {
+            console.log(obj)
+        });
+
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'edit') {
+
+                document.cookie = "id=" + obj.data.id + "; path=/page/product/products/edit.html";
+                document.cookie = "name=" + obj.data.name + "; path=/page/product/products/edit.html";
+                document.cookie = "count=" + obj.data.count + "; path=/page/product/products/edit.html";
+                document.cookie = "typeId=" + obj.data.type.id + "; path=/page/product/products/edit.html";
+
+                var index = layer.open({
+                    title: '编辑用户',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin:true,
+                    shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: './edit.html',
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+                return false;
+            } else if (obj.event === 'delete') {
+                layer.confirm('真的删除行么', function (index) {
+                    $.ajax({
+                        type: "post",
+                        url: "../../product/deleteById",
+                        data: {'id' : obj.data.id},
+                        // contentType: "application/text",
+                        // dataType : "text",
+                        success: function(date){
+                            if(date.msg === "success"){
+                                var index01 = layer.alert("删除成功", function(){
+                                    layer.close(index01);
+                                });
+                            }
+                            else{
+                                var index01 = layer.alert("删除失败", function(){
+                                    layer.close(index01);
+                                });
+                            }
+                        }
+                    });
+                    window.location.reload();
+                    layer.close(index);
+                });
+            }
+        });
+
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.OrderDao">
+
+    <resultMap type="com.example.demo.entity.Order" id="OrderMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="productCount" column="product_count" jdbcType="INTEGER"/>
+        <result property="startTime" column="start_time" jdbcType="OTHER"/>
+        <result property="endTime" column="end_time" jdbcType="OTHER"/>
+        <result property="company" column="company" jdbcType="VARCHAR"/>
+        <result property="phone" column="phone" jdbcType="VARCHAR"/>
+        <result property="ispay" column="ispay" jdbcType="INTEGER"/>
+        <result property="isdel" column="isdel" jdbcType="INTEGER"/>
+        <association property="product" select="com.example.demo.dao.ProductDao.queryById"
+                     column="product_id"></association>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="OrderMap">
+        select id,
+               product_id,
+               product_count,
+               start_time,
+               end_time,
+               company,
+               phone,
+               ispay,
+               isdel
+        from layui.order
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="OrderMap">
+        select id,
+               product_id,
+               product_count,
+               start_time,
+               end_time,
+               company,
+               phone,
+               ispay,
+               isdel
+        from layui.order
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="OrderMap">
+        select
+        id, product_id, product_count, start_time, end_time, company, phone, ispay, isdel
+        from layui.order
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="productId != null">
+                and product_id = #{productId}
+            </if>
+            <if test="productCount != null">
+                and product_count = #{productCount}
+            </if>
+            <if test="startTime != null">
+                and start_time = #{startTime}
+            </if>
+            <if test="endTime != null">
+                and end_time = #{endTime}
+            </if>
+            <if test="company != null and company != ''">
+                and company = #{company}
+            </if>
+            <if test="phone != null and phone != ''">
+                and phone = #{phone}
+            </if>
+            <if test="ispay != null">
+                and ispay = #{ispay}
+            </if>
+            <if test="isdel != null">
+                and isdel = #{isdel}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into layui.order(product_id, product_count, start_time, end_time, company, phone, ispay, isdel)
+        values (#{productId}, #{productCount}, #{startTime}, #{endTime}, #{company}, #{phone}, #{ispay}, #{isdel})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into layui.order(product_id, product_count, start_time, end_time, company, phone, ispay, isdel)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.productId}, #{entity.productCount}, #{entity.startTime}, #{entity.endTime}, #{entity.company},
+            #{entity.phone}, #{entity.ispay}, #{entity.isdel})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into layui.order(product_id, product_count, start_time, end_time, company, phone, ispay, isdel)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.productId}, #{entity.productCount}, #{entity.startTime}, #{entity.endTime}, #{entity.company},
+            #{entity.phone}, #{entity.ispay}, #{entity.isdel})
+        </foreach>
+        on duplicate key update
+        product_id = values(product_id) , product_count = values(product_count) , start_time = values(start_time) ,
+        end_time = values(end_time) , company = values(company) , phone = values(phone) , ispay = values(ispay) , isdel
+        = values(isdel)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update layui.order
+        <set>
+            <if test="productId != null">
+                product_id = #{productId},
+            </if>
+            <if test="productCount != null">
+                product_count = #{productCount},
+            </if>
+            <if test="startTime != null">
+                start_time = #{startTime},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime},
+            </if>
+            <if test="company != null and company != ''">
+                company = #{company},
+            </if>
+            <if test="phone != null and phone != ''">
+                phone = #{phone},
+            </if>
+            <if test="ispay != null">
+                ispay = #{ispay},
+            </if>
+            <if test="isdel != null">
+                isdel = #{isdel},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteById">
+        delete
+        from layui.order
+        where id = #{id}
+    </delete>
+    
+    <select id="searchByProId" resultMap="OrderMap">
+        select * from `order` where product_id = #{productId}
+    </select>
+    
+    <select id="searchByCompany" resultMap="OrderMap">
+        select * from `order` where company = #{company}
+    </select>
+
+
+
+</mapper>

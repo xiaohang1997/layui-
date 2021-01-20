@@ -1,0 +1,74 @@
+{
+  "homeInfo": {
+    "title": "首页",
+    "href": "page/welcome-1.html"
+  },
+  "logoInfo": {
+    "title": "建材租赁管理",
+    "image": "images/logo.png",
+    "href": ""
+  },
+  "menuInfo": [
+    {
+      "title": "常规管理",
+      "icon": "fa fa-address-book",
+      "href": "",
+      "target": "_self",
+      "spread": false,
+      "child": [
+        {
+          "title": "首页",
+          "href": "page/welcome-1.html",
+          "icon": "fa fa-window-maximize",
+          "target": "_self",
+          "spread": false
+
+        },
+        {
+          "title": "用户",
+          "href": "page/user/table.html",
+          "icon": "fa fa-window-maximize",
+          "target": "_self",
+          "spread": false
+        },
+        {
+          "title": "我的库存",
+          "href": "",
+          "icon": "fa fa-home",
+          "target": "_self",
+          "spread": false,
+          "child": [
+            {
+              "title": "产品类别",
+              "href": "page/product/product_type/table.html",
+              "icon": "fa fa-tachometer",
+              "target": "_self",
+              "spread": false
+            },
+            {
+              "title": "产品信息",
+              "href": "page/product/products/table.html",
+              "icon": "fa fa-tachometer",
+              "target": "_self",
+              "spread": false
+            }
+          ]
+        },
+        {
+          "title": "架管租赁",
+          "href": "page/order/table.html",
+          "icon": "fa fa-window-maximize",
+          "target": "_self",
+          "spread": false
+        },
+        {
+          "title": "留言板",
+          "href": "page/tip/table.html",
+          "icon": "fa fa-window-maximize",
+          "target": "_self",
+          "spread": false
+        }
+      ]
+    }
+  ]
+}
