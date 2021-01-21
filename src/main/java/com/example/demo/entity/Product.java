@@ -7,10 +7,8 @@ public class Product implements Serializable {
     private String name;
     private Long count;
     private ProductType type;
+    private String imgUrl;
 
-
-    public Product() {
-    }
 
     public int getId() {
         return id;
@@ -44,4 +42,11 @@ public class Product implements Serializable {
         this.type = productType;
     }
 
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl;
+    }
 }

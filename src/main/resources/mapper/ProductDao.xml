@@ -6,6 +6,7 @@
         <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="name" column="name" jdbcType="VARCHAR"/>
         <result property="count" column="count" jdbcType="VARCHAR"/>
+        <result property="imgUrl" column="img_url" jdbcType="VARCHAR" />
         <association property="type" select="com.example.demo.dao.ProductTypeDao.queryById"
                      column="type"></association>
     </resultMap>
@@ -28,9 +29,9 @@
         </where>
     </select>
 
-    <insert parameterType="com.example.demo.entity.ProductVO" id="insert" keyProperty="id" useGeneratedKeys="true">
-        insert into product(name, count, type)
-        values (#{name}, #{count}, #{typeId})
+    <insert parameterType="com.example.demo.entity.ProductVO" id="insert">
+        insert into product(name, count, type, img_url)
+        values (#{name}, #{count}, #{typeId}, #{imgUrl})
     </insert>
 
     <!--通过主键修改数据-->

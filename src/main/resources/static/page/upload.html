@@ -18,9 +18,10 @@
 <script src="../lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
 <!-- 注意：如果你直接复制所有代码到本地，上述js路径需要改成你本地的 -->
 <script>
-    layui.use('upload', function() {
+    layui.use(['upload','jquery','layer'], function() {
         var $ = layui.jquery
-            , upload = layui.upload;
+            , upload = layui.upload
+            ,layer = layui.layer;
 
         //普通图片上传
         var uploadInst = upload.render({
@@ -34,8 +35,12 @@
             }
             ,done: function(res){
                 //如果上传失败
-                if(res.code > 0){
-                    return layer.msg('上传失败');
+                if(res.code === 200){
+
+                    return layer.msg("上传成功");
+
+                }else {
+                    return layer.msg("上传失败");
                 }
                 //上传成功
             }
