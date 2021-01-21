@@ -26,9 +26,6 @@ public class FileUpload {
     @Value("${upload.imgUrl}")
     private String imgUrl;
 
-    @Resource
-    private ProductService productService;
-
     @RequestMapping("/upload")
     public JSONObject upload(MultipartFile file, HttpServletRequest request, HttpServletResponse response) throws IllegalStateException, IOException{
         JSONObject res = new JSONObject();
@@ -36,15 +33,13 @@ public class FileUpload {
         //String path = request.getSession().getServletContext().getRealPath("upload");
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式  HH:mm:ss
         String date = df.format(new Date());// new Date()为获取当前系统时间，也可使用当前时间戳
-        String path = "D:\\var\\uploaded_files\\";
         UUID uuid=UUID.randomUUID();
         String originalFilename = file.getOriginalFilename();       //本来的文件名
 //        String fileName = uuid.toString() + originalFilename;
         String extendName = originalFilename.substring(originalFilename.lastIndexOf("."), originalFilename.length());
         String fileName = uuid.toString() + extendName;
-        System.out.println("path="+path);
-        File dir = new File(path+fileName);
-        File filepath = new File(path);
+        File dir = new File(imgUrl+fileName);
+        File filepath = new File(imgUrl);
         if(!filepath.exists()){
             filepath.mkdirs();
         }else{
