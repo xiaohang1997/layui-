@@ -5,6 +5,7 @@ import com.example.demo.dao.ProductDao;
 import com.example.demo.entity.Product;
 import com.example.demo.entity.ProductVO;
 import com.example.demo.service.ProductService;
+import com.example.demo.until.UploadFile;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -30,22 +31,7 @@ public class FileUpload {
     public JSONObject upload(MultipartFile file, HttpServletRequest request, HttpServletResponse response) throws IllegalStateException, IOException{
         JSONObject res = new JSONObject();
         JSONObject resUrl = new JSONObject();
-        //String path = request.getSession().getServletContext().getRealPath("upload");
-        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");//设置日期格式  HH:mm:ss
-        String date = df.format(new Date());// new Date()为获取当前系统时间，也可使用当前时间戳
-        UUID uuid=UUID.randomUUID();
-        String originalFilename = file.getOriginalFilename();       //本来的文件名
-//        String fileName = uuid.toString() + originalFilename;
-        String extendName = originalFilename.substring(originalFilename.lastIndexOf("."), originalFilename.length());
-        String fileName = uuid.toString() + extendName;
-        File dir = new File(imgUrl+fileName);
-        File filepath = new File(imgUrl);
-        if(!filepath.exists()){
-            filepath.mkdirs();
-        }else{
-            System.out.println("路径存在");
-        }
-        file.transferTo(dir);
+        String fileName = UploadFile.uploadFile(file);
         //获得当前项目所在路径
 //        String pathRoot=request.getSession().getServletContext().getRealPath("");
 //        System.out.println(pathRoot);
