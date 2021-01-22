@@ -13,39 +13,20 @@
 <div class="layuimini-container">
     <div class="layuimini-main">
 
-        <fieldset class="table-search-fieldset">
-            <legend>搜索信息</legend>
-            <div style="margin: 10px 10px 10px 10px">
-                <form class="layui-form layui-form-pane">
-                    <div class="layui-form-item">
 
-                        <div class="layui-inline">
-                            <label class="layui-form-label">产品名称</label>
-                            <div class="layui-input-inline">
-                                <input type="text" name="name" autocomplete="off" class="layui-input">
-                            </div>
-                        </div>
-                        <div class="layui-inline">
-                            <button type="submit" class="layui-btn layui-btn-primary"  lay-submit lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </fieldset>
-
-        <script type="text/html" id="toolbarDemo">
-            <div class="layui-btn-container">
-                <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加 </button>
-                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>
-            </div>
-        </script>
+<!--        <script type="text/html" id="toolbarDemo">-->
+<!--            <div class="layui-btn-container">-->
+<!--                <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加 </button>-->
+<!--                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"> 删除 </button>-->
+<!--            </div>-->
+<!--        </script>-->
 
         <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
 
-        <script type="text/html" id="currentTableBar">
-            <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
-            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" type="button" lay-event="delete">删除</a>
-        </script>
+<!--        <script type="text/html" id="currentTableBar">-->
+<!--            <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit">编辑</a>-->
+<!--            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>-->
+<!--        </script>-->
 
     </div>
 </div>
@@ -58,7 +39,7 @@
 
         table.render({
             elem: '#currentTableId',
-            url: '../../../product/queryAll',
+            url: '../../ispay/findAll',
             toolbar: '#toolbarDemo',
             defaultToolbar: ['filter', 'exports', 'print', {
                 title: '提示',
@@ -66,13 +47,12 @@
                 icon: 'layui-icon-tips'
             }],
             cols: [[
-                {type: "checkbox", width: 50},
-                {field: 'id', title: 'id'},
-                {field: 'name',  title: '名字'},
-                {field: 'count', title: '库存'},
-                {templet:'<div>{{d.type.name}}</div>', title: '类别'},
-                {templet:'<div><img width="100px" height="100px" src="{{d.imgUrl}}"></div>', title: '产品图片'},
-                {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center"}
+                // {type: "checkbox", width: 50},
+                // {field: 'id', title: 'id'},
+                {field: 'orderId',  title: '订单id'},
+                {field: 'company',  title: '公司'},
+                {field: 'endTime',  title: '交付时间'},
+                // {title: '操作', minWidth: 150, toolbar: '#currentTableBar', align: "center"}
             ]],
             limits: [10, 15, 20, 25, 50, 100],
             limit: 15,
@@ -87,7 +67,7 @@
             //执行搜索重载
             table.reload('currentTableId', {
                 method: 'post',
-                url: '/product/search',
+                url: '../../user/findByName',
                 page: {
                     curr: 1
                 }
@@ -126,7 +106,7 @@
                 layer.confirm("确定要删除？", function (index) {
                     $.ajax({
                         type: "get",
-                        url: "../../../product/deleteMany?data=" + myArray,
+                        url: "../../user/deleteMany?data=" + myArray,
                         success: function(data){
                             if(data.msg == "success"){
                                 var index02 = layer.alert("删除成功", function(){
@@ -154,20 +134,18 @@
         table.on('tool(currentTableFilter)', function (obj) {
             var data = obj.data;
             if (obj.event === 'edit') {
-
-                document.cookie = "id=" + obj.data.id + "; path=/page/product/products/edit.html";
-                document.cookie = "name=" + obj.data.name + "; path=/page/product/products/edit.html";
-                document.cookie = "count=" + obj.data.count + "; path=/page/product/products/edit.html";
-                document.cookie = "typeId=" + obj.data.type.id + "; path=/page/product/products/edit.html";
-
+                document.cookie = "id=" + obj.data.id + "; path=/page/user/edit.html";
+                document.cookie = "name=" + obj.data.name + "; path=/page/user/edit.html";
+                document.cookie = "password=" + obj.data.password + "; path=/page/user/edit.html";
+                document.cookie = "telephone=" + obj.data.telephone + "; path=/page/user/edit.html";
                 var index = layer.open({
-                    title: '编辑用户',
+                    title: '编辑',
                     type: 2,
                     shade: 0.2,
                     maxmin:true,
                     shadeClose: true,
                     area: ['100%', '100%'],
-                    content: './edit.html',
+                    content: 'edit.html',
                 });
                 $(window).on("resize", function () {
                     layer.full(index);
@@ -177,12 +155,12 @@
                 layer.confirm('真的删除行么', function (index) {
                     $.ajax({
                         type: "post",
-                        url: "../../../product/deleteById",
+                        url: "../../user/deleteById",
                         data: {'id' : obj.data.id},
                         // contentType: "application/text",
                         // dataType : "text",
-                        success: function(date){
-                            if(date.msg === "success"){
+                        success: function(data){
+                            if(data.msg == "success"){
                                 var index01 = layer.alert("删除成功", function(){
                                     layer.close(index01);
                                 });

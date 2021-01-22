@@ -67,6 +67,13 @@
           "icon": "fa fa-window-maximize",
           "target": "_self",
           "spread": false
+        },
+        {
+          "title": "催债",
+          "href": "page/ispay/table.html",
+          "icon": "fa fa-window-maximize",
+          "target": "_self",
+          "spread": false
         }
       ]
     }

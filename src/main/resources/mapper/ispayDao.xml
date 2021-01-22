@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.IspayDao">
+
+    <resultMap type="com.example.demo.entity.Ispay" id="IspayMap">
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="orderId" column="order_id" jdbcType="INTEGER"/>
+        <result property="company" column="company" jdbcType="VARCHAR"/>
+        <result property="endTime" column="end_time" jdbcType="DATE"/>
+    </resultMap>
+
+    <!--查询单个-->
+    <select id="queryById" resultMap="IspayMap">
+        select id,
+               order_id,
+               company,
+               end_time
+        from layui.ispay
+        where id = #{id}
+    </select>
+
+    <!--查询指定行数据-->
+    <select id="queryAllByLimit" resultMap="IspayMap">
+        select id,
+               order_id,
+               company,
+               end_time
+        from layui.ispay
+        limit #{offset}, #{limit}
+    </select>
+
+    <!--通过实体作为筛选条件查询-->
+    <select id="queryAll" resultMap="IspayMap">
+        select
+        id, order_id, company, end_time
+        from layui.ispay
+        <where>
+            <if test="id != null">
+                and id = #{id}
+            </if>
+            <if test="orderId != null">
+                and order_id = #{orderId}
+            </if>
+            <if test="company != null and company != ''">
+                and company = #{company}
+            </if>
+            <if test="endTime != null">
+                and end_time = #{endTime}
+            </if>
+        </where>
+    </select>
+
+    <!--新增所有列-->
+    <insert id="insert" keyProperty="id" useGeneratedKeys="true">
+        insert into layui.ispay(order_id, company, end_time)
+        values (#{orderId}, #{company}, #{endTime})
+    </insert>
+
+    <insert id="insertBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into layui.ispay(order_id, company, end_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.orderId}, #{entity.company}, #{entity.endTime})
+        </foreach>
+    </insert>
+
+    <insert id="insertOrUpdateBatch" keyProperty="id" useGeneratedKeys="true">
+        insert into layui.ispay(order_id, company, end_time)
+        values
+        <foreach collection="entities" item="entity" separator=",">
+            (#{entity.orderId}, #{entity.company}, #{entity.endTime})
+        </foreach>
+        on duplicate key update
+        order_id = values(order_id) , company = values(company) , end_time = values(end_time)
+    </insert>
+
+    <!--通过主键修改数据-->
+    <update id="update">
+        update layui.ispay
+        <set>
+            <if test="company != null and company != ''">
+                company = #{company},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime},
+            </if>
+        </set>
+        where order_id = #{orderId}
+    </update>
+
+    <!--通过主键删除-->
+    <delete id="deleteByOrderId">
+        delete
+        from layui.ispay
+        where order_id = #{orderId}
+    </delete>
+
+
+
+</mapper>

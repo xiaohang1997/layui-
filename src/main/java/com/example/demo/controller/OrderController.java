@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.entity.*;
+import com.example.demo.service.IspayService;
 import com.example.demo.service.OrderService;
 import com.example.demo.service.ProductService;
 import com.example.demo.until.JsonResult;
@@ -20,6 +21,8 @@ public class OrderController {
     @Resource
     private OrderService orderService;
 
+    @Resource
+    private IspayService ispayService;
 
 
     @GetMapping("queryAll")
@@ -105,6 +108,9 @@ public class OrderController {
          orderVO.setIspay(ispay);
          orderService.update(orderVO);
          orderService.change(is, productId, productCount);
+         if (ispay == 1){
+             ispayService.deleteByOrderId(id);
+         }
          return JsonResult.sendSuccess();
     }
 

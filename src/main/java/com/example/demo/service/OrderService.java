@@ -18,4 +18,5 @@ public interface OrderService {
     int subtractProductCountBuId(OrderVO orderVO);
     int addProductCountBuId(OrderVO orderVO);
     void change(String is, int id, Long count);
+    void selectTime();
 }

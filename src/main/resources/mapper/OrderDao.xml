@@ -5,8 +5,8 @@
     <resultMap type="com.example.demo.entity.Order" id="OrderMap">
         <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="productCount" column="product_count" jdbcType="INTEGER"/>
-        <result property="startTime" column="start_time" jdbcType="OTHER"/>
-        <result property="endTime" column="end_time" jdbcType="OTHER"/>
+        <result property="startTime" column="start_time" jdbcType="DATE"/>
+        <result property="endTime" column="end_time" jdbcType="DATE"/>
         <result property="company" column="company" jdbcType="VARCHAR"/>
         <result property="phone" column="phone" jdbcType="VARCHAR"/>
         <result property="ispay" column="ispay" jdbcType="INTEGER"/>
@@ -156,6 +156,8 @@
         select * from `order` where company = #{company}
     </select>
 
-
+    <select id="selectTime" resultMap="OrderMap">
+        select * from `order` where ( end_time &lt; NOW()) and ispay = 0
+    </select>
 
 </mapper>

@@ -16,4 +16,5 @@ public interface OrderDao {
     int deleteById(Integer id);
     List<Order> searchByProId(Integer id);
     List<Order> searchByCompany(String company);
+    List<Order> selectTime();
 }

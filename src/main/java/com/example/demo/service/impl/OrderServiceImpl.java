@@ -1,15 +1,14 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.dao.IspayDao;
 import com.example.demo.dao.OrderDao;
 import com.example.demo.dao.ProductDao;
-import com.example.demo.entity.Order;
-import com.example.demo.entity.OrderVO;
-import com.example.demo.entity.Product;
-import com.example.demo.entity.ProductVO;
+import com.example.demo.entity.*;
 import com.example.demo.service.OrderService;
 import com.example.demo.service.ProductService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -23,6 +22,8 @@ public class OrderServiceImpl implements OrderService {
     private OrderDao orderDao;
     @Resource
     private ProductDao productDao;
+    @Resource
+    private IspayDao ispayDao;
 
 
     @Override
@@ -96,5 +97,27 @@ public class OrderServiceImpl implements OrderService {
         else if (is.equals("jian")){
             productDao.subtractProductCountBuId(id, count);
         }
+    }
+
+    @Override
+    @Scheduled(fixedRate = 1000*60*60*24 )
+//    @Scheduled(cron = "0/59 0 0-23 * * ?")
+    public void selectTime() {
+        List<Order> list = orderDao.selectTime();
+        for (Order order : list){
+            Ispay ispay = new Ispay();
+            ispay.setOrderId(order.getId());
+            if (!ispayDao.queryAll(ispay).isEmpty()){
+                ispay.setCompany(order.getCompany());
+                ispay.setEndTime(order.getEndTime());
+                ispayDao.update(ispay);
+            }
+            else {
+                ispay.setCompany(order.getCompany());
+                ispay.setEndTime(order.getEndTime());
+                ispayDao.insert(ispay);
+            }
+        }
+
     }
 }

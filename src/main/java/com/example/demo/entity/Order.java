@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -17,9 +18,9 @@ public class Order {
     private Date endTime;
     private String company;
     private String phone;
-    private Integer ispay;
+    private Integer ispay=0;
     //0未还 1已还
-    private Integer isdel;
+    private Integer isdel=0;
     //0未删 1已删
 
     public Order() {
@@ -96,4 +97,5 @@ public class Order {
     public void setIsdel(Integer isdel) {
         this.isdel = isdel;
     }
+
 }
