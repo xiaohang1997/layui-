@@ -10,10 +10,27 @@ Target Server Type    : MYSQL
 Target Server Version : 50714
 File Encoding         : 65001
 
-Date: 2021-01-21 09:59:07
+Date: 2021-01-22 16:01:07
 */
 
 SET FOREIGN_KEY_CHECKS=0;
+
+-- ----------------------------
+-- Table structure for ispay
+-- ----------------------------
+DROP TABLE IF EXISTS `ispay`;
+CREATE TABLE `ispay` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `order_id` int(11) DEFAULT NULL,
+  `company` varchar(255) DEFAULT NULL,
+  `end_time` date DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2621 DEFAULT CHARSET=utf8;
+
+-- ----------------------------
+-- Records of ispay
+-- ----------------------------
+INSERT INTO `ispay` VALUES ('2620', '5', 'Mr.Hang', '2021-01-20');
 
 -- ----------------------------
 -- Table structure for order
@@ -37,7 +54,7 @@ CREATE TABLE `order` (
 -- Records of order
 -- ----------------------------
 INSERT INTO `order` VALUES ('1', '1', '100', '2020-10-02', '2021-01-24', '山水集团', '15678999878', '1', '0');
-INSERT INTO `order` VALUES ('2', '2', '100', '2020-11-21', '2021-03-20', 'Mr.Hang', '13456676567', '1', '1');
+INSERT INTO `order` VALUES ('2', '1', '100', '2020-11-21', '2021-03-20', 'Mr.Hang', '13456676567', '1', '1');
 INSERT INTO `order` VALUES ('4', '1', '100', '2021-01-06', '2021-01-29', 'Mr.Hang', '15680098165', '1', '0');
 INSERT INTO `order` VALUES ('5', '1', '100', '2021-01-05', '2021-01-21', 'Mr.Hang', '15680098165', '0', '0');
 
@@ -58,7 +75,7 @@ CREATE TABLE `product` (
 -- ----------------------------
 -- Records of product
 -- ----------------------------
-INSERT INTO `product` VALUES ('10', 'asd', '4444', '1', '/var/uploaded_files/f16f81ca-dee7-4a5c-abe6-2e861c4b953b.PNG');
+INSERT INTO `product` VALUES ('1', '钢管', '4644', '1', '/var/uploaded_files/f16f81ca-dee7-4a5c-abe6-2e861c4b953b.PNG');
 
 -- ----------------------------
 -- Table structure for product_type
